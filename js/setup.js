@@ -13,15 +13,18 @@ $.ajaxPrefilter(function(settings, _, jqXHR) {
   jqXHR.setRequestHeader("X-Parse-REST-API-Key", "QC2F43aSAghM97XidJw8Qiy1NXlpL5LR45rhAVAf");
 });
 
+// RETRIEVE CHATS:
+
 var test;
 $(document).ready(function(){
+
   var successCallback = function(data){
     console.log(data.results[1].text);
 
     var results = data.results;
     test = data.results;
     for (var i=0; i < results.length; i++){
-      var $username = $('<div class="username"><strong></strong></div>');
+      var $username = $('<div class="username"></div>');
       if (!results[i].username){
         $username.text('Anonymous');
       } else {
@@ -44,9 +47,70 @@ $(document).ready(function(){
   };
 
   $.ajax({
-    Type: "GET",
-    url: "https://api.parse.com/1/classes/messages",
+    type: "GET",
+    url: "https://api.parse.com/1/classes/messages?order=-createdAt",
     success: successCallback,
     error: errorCallback
   });
+
+
+// GRAB USERNAME
+
+var globalUsername = window.location.search.split("=")[1];
+
+var jsonSent = function(){alert("Json Sent!");};
+
+var jsonNotSent = function(){alert("Json not sent... motherfucker");};
+
+//
+  $("form").submit(function(e){
+    e.preventDefault();
+    console.log(e);
+    var data2 = JSON.stringify({
+        username: globalUsername,
+        text: $('form').children().first().val()
+      });
+    $.ajax({
+      type: "POST",
+      contentType: "application/json",
+      url: "https://api.parse.com/1/classes/messages",
+      data: data2,
+      success: jsonSent,
+      error: jsonNotSent
+    });
+  });
+
+
+
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
