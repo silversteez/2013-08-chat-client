@@ -23,9 +23,9 @@ $(document).ready(function(){
 
   var enterChatroom = function(){
     currentRoom = $(this).text();
-    $.ajax({
-
-    })
+    $("#chats").html("");
+    $("#chatrooms").html("");
+    callAjax();
   };
 
   var currentRoom = "default";
@@ -78,6 +78,7 @@ $(document).ready(function(){
       chatrooms.click(enterChatroom);
       $("#chatrooms").append(chatrooms);
     }
+
   };
 
 
@@ -85,6 +86,7 @@ $(document).ready(function(){
   var getMessagesError = function(){
     console.log("error!!!");
   };
+
   var callAjax = function(){
     $.ajax({
       type: "GET",
@@ -92,8 +94,10 @@ $(document).ready(function(){
       success: onRecMessageData,
       error: getMessagesError
     });
-  }
+  };
 
+
+  callAjax();
 
 
 // GRAB USERNAME
@@ -119,18 +123,12 @@ var jsonNotSent = function(){console.log("JSON not sent.");};
     });
   });
 
-  $(".createChatroom").submit(function(e){
-    e.preventDefault();
-    var newChat = $("#newestChat").val();
-    newChat = JSON.stringify({
-      roomname: newChat
-    });
-    $.ajax({
-      type: "POST",
-      contentType: "application/json"
-
-    })
-  })
+  $("#exitChatroom").click(function(){
+    currentRoom = "default";
+    $("#chats").html("");
+    $("#chatrooms").html("");
+    callAjax();
+  });
 
 });
 
