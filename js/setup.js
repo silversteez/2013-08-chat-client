@@ -18,6 +18,10 @@ $.ajaxPrefilter(function(settings, _, jqXHR) {
 var test;
 $(document).ready(function(){
 
+  var addFriend = function() {
+    $("."+$(this).text()).addClass('friend');
+  };
+
   var successCallback = function(data){
     console.log(data.results[1].text);
 
@@ -25,11 +29,11 @@ $(document).ready(function(){
     test = data.results;
     for (var i=0; i < results.length; i++){
       var $username = $('<div class="username"></div>');
-      if (!results[i].username){
-        $username.text('Anonymous');
-      } else {
-        $username.text(results[i].username);
-      }
+      var name = results[i].username || "Anonymous";
+      $username.text(name);
+      $username.addClass(name);
+      // Call addFriend (which adds bold class) if username clicked
+      $username.click(addFriend);
       var $contents = $('<div></div>');
       $contents.text(results[i].text);
       $container = $("<div></div>");
@@ -58,17 +62,17 @@ $(document).ready(function(){
 
 var globalUsername = window.location.search.split("=")[1];
 
-var jsonSent = function(){alert("Json Sent!");};
+var jsonSent = function(){};
 
-var jsonNotSent = function(){alert("Json not sent... motherfucker");};
+var jsonNotSent = function(){console.log("JSON not sent.");};
 
 //
-  $("form").submit(function(e){
+  $(".enterMessage").submit(function(e){
     e.preventDefault();
     console.log(e);
     var data2 = JSON.stringify({
         username: globalUsername,
-        text: $('form').children().first().val()
+        text: $('.enterMessage').children().first().val()
       });
     $.ajax({
       type: "POST",
@@ -80,6 +84,10 @@ var jsonNotSent = function(){alert("Json not sent... motherfucker");};
     });
   });
 
+  // $('.username').on('click', function(e){
+  //   console.log(e);
+  //   console.log("testing...");
+  // });
 
 
 });
