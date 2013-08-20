@@ -34,6 +34,7 @@ $(document).ready(function(){
   };
 
   var displayMessages = function(data){
+    // debugger;
     var results = data.results;
     for (var i=0; i < results.length; i++){
       if (currentRoom === "default" && !results[i].roomname) {
@@ -76,7 +77,6 @@ $(document).ready(function(){
       chatrooms.click(enterChatroom);
       $("#chatrooms").append(chatrooms);
     }
-
   };
 
 
@@ -118,6 +118,7 @@ var jsonNotSent = function(){console.log("JSON not sent.");};
       data2.roomname = currentRoom;
     }
     data3 = JSON.stringify(data2);
+    console.log(data3);
     $.ajax({
       type: "POST",
       contentType: "application/json",
@@ -131,6 +132,13 @@ var jsonNotSent = function(){console.log("JSON not sent.");};
 
   $("#exitChatroom").click(function(){
     currentRoom = "default";
+    callAjax();
+  });
+
+  $(".enterChatroomName").submit(function(e){
+    e.preventDefault();
+    currentRoom = $("#newestChat").val();
+    $("#newestChat").val("");
     callAjax();
   });
 
