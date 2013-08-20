@@ -7,19 +7,18 @@
     <link rel="stylesheet" href="css/styles.css">
     <script src="vendor/jquery/jquery-1.9.1.js"></script>
     <script src="js/setup.js"></script>
-    <script src="js/chat.js"></script>
   </head>
   <body>
     <form class="enterMessage">
-      What's on your mind? <input type="text" name="userMessage" />
+      Enter message: <input type="text" name="userMessage" />
       <input type="submit">
     </form>
     <div class="chatroom">
-      <form class="createChatroom">
-        Type in your chatroom's name <input type="text" />
-        <input type="submit" />
+      <form>
+        Type in your new chatroom's name <input type="text" id="newestChat" />
+        <input type="submit" class="createChatroom"/>
       </form>
-      <ul class="chatrooms">
+      <ul id="chatrooms">
       </ul>
 
     </div>

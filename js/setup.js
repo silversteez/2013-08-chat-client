@@ -15,54 +15,90 @@ $.ajaxPrefilter(function(settings, _, jqXHR) {
 
 // RETRIEVE CHATS:
 
-var test;
 $(document).ready(function(){
 
   var addFriend = function() {
     $("."+$(this).text()).addClass('friend');
   };
 
-  var successCallback = function(data){
-    console.log(data.results[1].text);
+  var enterChatroom = function(){
+    currentRoom = $(this).text();
+    $.ajax({
 
+    })
+  };
+
+  var currentRoom = "default";
+
+  var onRecMessageData = function(data) {
+    displayMessages(data);
+    displayChatrooms(data);
+  };
+
+  var displayMessages = function(data){
     var results = data.results;
-    test = data.results;
     for (var i=0; i < results.length; i++){
-      var $username = $('<div class="username"></div>');
-      var name = results[i].username || "Anonymous";
+      if (currentRoom === "default" && !results[i].roomname) {
+        displayMessage(results[i]);
+      }
+      else if (results[i].roomname && results[i].roomname === currentRoom) {
+        displayMessage(results[i]);
+      }
+    }
+  };
+
+  var displayMessage = function(messageObj) {
+    var $username = $('<div class="username"></div>');
+      var name = messageObj.username || "Anonymous";
       $username.text(name);
       $username.addClass(name);
       // Call addFriend (which adds bold class) if username clicked
       $username.click(addFriend);
       var $contents = $('<div></div>');
-      $contents.text(results[i].text);
+      $contents.text(messageObj.text);
       $container = $("<div></div>");
       $container.append($username).append($contents);
       $("#chats").append($container);
-
-      //var message = "<div>" + username + " : " + results[i].text + "</div>";
-
-    }
-
-
   };
-  var errorCallback = function(){
+  // Check for chatroom
+
+  var displayChatrooms = function(data){
+    var results = data.results;
+    var chatroomNames = {};
+
+    for (var i=0; i < results.length; i++){
+      if (results[i].roomname){
+        chatroomNames[results[i].roomname] = true;
+      }
+    }
+    for (var key in chatroomNames){
+      var chatrooms = $("<li></li>");
+      chatrooms.text(key);
+      //enable click to enter chat functionality
+      chatrooms.click(enterChatroom);
+      $("#chatrooms").append(chatrooms);
+    }
+  };
+
+
+
+  var getMessagesError = function(){
     console.log("error!!!");
   };
+  var callAjax = function(){
+    $.ajax({
+      type: "GET",
+      url: "https://api.parse.com/1/classes/messages?order=-createdAt",
+      success: onRecMessageData,
+      error: getMessagesError
+    });
+  }
 
-  $.ajax({
-    type: "GET",
-    url: "https://api.parse.com/1/classes/messages?order=-createdAt",
-    success: successCallback,
-    error: errorCallback
-  });
 
 
 // GRAB USERNAME
 
 var globalUsername = window.location.search.split("=")[1];
-
-var jsonSent = function(){};
 
 var jsonNotSent = function(){console.log("JSON not sent.");};
 
@@ -79,16 +115,22 @@ var jsonNotSent = function(){console.log("JSON not sent.");};
       contentType: "application/json",
       url: "https://api.parse.com/1/classes/messages",
       data: data2,
-      success: jsonSent,
       error: jsonNotSent
     });
   });
 
-  // $('.username').on('click', function(e){
-  //   console.log(e);
-  //   console.log("testing...");
-  // });
+  $(".createChatroom").submit(function(e){
+    e.preventDefault();
+    var newChat = $("#newestChat").val();
+    newChat = JSON.stringify({
+      roomname: newChat
+    });
+    $.ajax({
+      type: "POST",
+      contentType: "application/json"
 
+    })
+  })
 
 });
 
