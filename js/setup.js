@@ -23,8 +23,6 @@ $(document).ready(function(){
 
   var enterChatroom = function(){
     currentRoom = $(this).text();
-    $("#chats").html("");
-    $("#chatrooms").html("");
     callAjax();
   };
 
@@ -88,6 +86,8 @@ $(document).ready(function(){
   };
 
   var callAjax = function(){
+    $("#chats").html("");
+    $("#chatrooms").html("");
     $.ajax({
       type: "GET",
       url: "https://api.parse.com/1/classes/messages?order=-createdAt",
@@ -110,23 +110,27 @@ var jsonNotSent = function(){console.log("JSON not sent.");};
   $(".enterMessage").submit(function(e){
     e.preventDefault();
     console.log(e);
-    var data2 = JSON.stringify({
+    var data2 = {
         username: globalUsername,
         text: $('.enterMessage').children().first().val()
-      });
+    };
+    if (currentRoom !== "default"){
+      data2.roomname = currentRoom;
+    }
+    data3 = JSON.stringify(data2);
     $.ajax({
       type: "POST",
       contentType: "application/json",
       url: "https://api.parse.com/1/classes/messages",
-      data: data2,
+      data: data3,
       error: jsonNotSent
     });
+    callAjax();
+    $('.enterMessage').children().first().val("");
   });
 
   $("#exitChatroom").click(function(){
     currentRoom = "default";
-    $("#chats").html("");
-    $("#chatrooms").html("");
     callAjax();
   });
 
